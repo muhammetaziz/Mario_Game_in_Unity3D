@@ -8,8 +8,8 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask groundLayer;
 
     private float horizontal;
-    private float speed = 6f;
-    private float jumpingPower = 7f;
+    private float speed = 7f;
+    private float jumpingPower = 10f;
     private bool isFacingRight = true;
     public Animator animator;
     public bool isCrouching = false;
@@ -23,15 +23,19 @@ public class PlayerMovement : MonoBehaviour
         {
             Flip();
         }
-        if(horizontal != 0f)
-        {
-            animator.SetBool("IsRunning", true);
-        }
-        else
-        {
-            animator.SetBool("IsRunning", false);
-        }
 
+        if (rb.velocity.y == 0f)
+        {
+            animator.SetBool("IsJumping", false);
+        }
+        //if (rb.velocity.x == 0f)
+        //{
+        //    animator.ResetTrigger("IsRunning");
+        //} 
+        //if (rb.velocity.x == 0f)
+        //{
+        //    animator.ResetTrigger("IsRunning");
+        //}
 
     }
 
@@ -46,20 +50,19 @@ public class PlayerMovement : MonoBehaviour
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
             animator.SetBool("IsJumping", true);
-
         }
-        
+
         if (context.canceled && rb.velocity.y > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
         }
+
     }
 
     private bool IsGrounded()
     {
-        animator.SetBool("IsJumping",false);
         return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
-    
+
     }
 
     private void Flip()
@@ -71,9 +74,9 @@ public class PlayerMovement : MonoBehaviour
     }
 
     public void Move(InputAction.CallbackContext context)
-    {
-        horizontal = context.ReadValue<Vector2>().x;
-          
+    { 
+            horizontal = context.ReadValue<Vector2>().x;
+            animator.SetTrigger("IsRunning"); 
     }
     public void Crouch(InputAction.CallbackContext context)
     {
